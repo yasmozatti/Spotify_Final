@@ -1,145 +1,158 @@
-# Mini Spotify -- Projeto Spring Boot
+# Spotify Final — Backend com Spring Boot
 
-Este projeto implementa uma aplicação web simples inspirada no Spotify,
-utilizando Spring Boot, seguindo os requisitos de CRUD e relacionamentos
-entre entidades.
+Este projeto implementa um sistema de gerenciamento baseado em três entidades principais: Usuário, Playlist e Música. A aplicação foi desenvolvida com Spring Boot, utilizando Spring Web, Spring Data JPA e MySQL como banco de dados. As entidades possuem relacionamentos do tipo Um-para-Muitos e Muitos-para-Muitos, e a aplicação fornece operações completas de CRUD por meio de endpoints REST.
 
-## Objetivo
+## Estrutura do Projeto
 
-Criar um sistema básico de gerenciamento de músicas, playlists e
-usuários, implementando quatro tipos de relacionamentos: - Um-para-Um -
-Um-para-Muitos - Muitos-para-Um - Muitos-para-Muitos
+src/main/java/com/example/spotifytunado1
+ ├── controllers
+ │    ├── UsuarioController.java
+ │    ├── PlaylistController.java
+ │    └── MusicaController.java
+ │
+ ├── entities
+ │    ├── Usuario.java
+ │    ├── Playlist.java
+ │    └── Musica.java
+ │
+ ├── repositories
+ │    ├── UsuarioRepository.java
+ │    ├── PlaylistRepository.java
+ │    └── MusicaRepository.java
+ │
+ ├── services
+ │    ├── UsuarioService.java
+ │    ├── PlaylistService.java
+ │    └── MusicaService.java
+ │
+ └── SpotifyTunado1Application.java
 
-O projeto inclui CRUD completo (Create, Read e Delete) para cada
-entidade.
+Descrição da Estrutura
 
-# Estrutura das Entidades
+Entities
+Contém as classes que representam as tabelas do banco de dados.
+Também definem os relacionamentos:
 
-## 1. Song (Música)
+Usuário 1 → N Playlist
 
-Representa uma música cadastrada no sistema.
+Playlist N ↔ N Música
 
-**Atributos:** - id - title - artist - genre - duration - playlists
-(relacionamento muitos-para-muitos)
+Repositories
+Interfaces que estendem JpaRepository, responsáveis por comunicar-se diretamente com o banco MySQL.
 
-**Relacionamentos:** - Muitos-para-Muitos com Playlist
+Services
+Camada intermediária entre controllers e repositories.
+Realiza as operações de CRUD chamando os repositórios.
 
-## 2. Playlist
+Controllers
+Expõem os endpoints REST da aplicação.
+Permitem realizar operações de listar, criar e deletar registros.
 
-Representa uma playlist criada por um usuário.
+Banco de Dados
 
-**Atributos:** - id - name - description - songs (músicas vinculadas) -
-owner (usuário dono da playlist)
+A conexão com o MySQL é configurada pelo arquivo application.properties:
 
-**Relacionamentos:** - Muitos-para-Muitos com Song - Muitos-para-Um com
-User
+spring.application.name=SpotifyTunado1
+spring.datasource.url=jdbc:mysql://localhost:3306/Spotify
+spring.datasource.username=root
+spring.datasource.password=123
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
+spring.jpa.properties.hibernate.format_sql=true
 
-## 3. User
 
-Representa um usuário do sistema.
+O Hibernate atualiza automaticamente as tabelas conforme as entidades são alteradas.
 
-**Atributos:** - id - name - email - playlists (playlists que o usuário
-criou) - favoritePlaylist (playlist favorita)
+Como Executar o Projeto
+1. Instalar ou rodar pelo navegador
 
-**Relacionamentos:** - Um-para-Muitos com Playlist - Um-para-Um com
-Playlist (favoritePlaylist)
+O projeto pode ser executado localmente com Maven ou por ambientes como GitHub Codespaces ou GitPod.
 
-# Relacionamentos Implementados
+2. Executar o servidor
 
-## 1. Um-para-Um (User → FavoritePlaylist)
+No terminal da IDE ou do Codespaces:
 
-Cada usuário possui uma única playlist favorita.
+mvn spring-boot:run
 
-    @OneToOne
-    @JoinColumn(name = "favorite_playlist_id")
-    private Playlist favoritePlaylist;
 
-## 2. Um-para-Muitos (User → Playlists)
+A aplicação ficará disponível em:
 
-Um usuário pode criar várias playlists.
+http://localhost:8080
 
-    @OneToMany(mappedBy = "owner")
-    private List<Playlist> playlists;
 
-## 3. Muitos-para-Um (Playlist → Owner)
+Ou no caso de Codespaces/GitPod, será gerada uma URL pública equivalente.
 
-Várias playlists podem ter o mesmo usuário como dono.
+Endpoints Disponíveis
+Usuários
 
-    @ManyToOne
-    @JoinColumn(name = "owner_id")
-    private User owner;
+Listar todos
 
-## 4. Muitos-para-Muitos (Playlist ↔ Songs)
+GET /usuarios
 
-Uma playlist pode conter várias músicas e cada música pode estar em
-várias playlists.
 
-    @ManyToMany
-    @JoinTable(
-        name = "playlist_song",
-        joinColumns = @JoinColumn(name = "playlist_id"),
-        inverseJoinColumns = @JoinColumn(name = "song_id")
-    )
-    private List<Song> songs;
+Criar usuário
 
-# Estrutura do Projeto
+POST /usuarios
 
-O projeto segue a arquitetura padrão de três camadas:
 
-## 1. Models (Entidades)
+Body JSON:
 
-Localizados em `model/`, representam as tabelas do sistema.
+{
+  "nome": "Maria"
+}
 
-## 2. Repositories
 
-Localizados em `repository/`, estendem `JpaRepository` e permitem
-operações no banco.
+Excluir usuário
 
-Exemplos: - SongRepository - PlaylistRepository - UserRepository
+DELETE /usuarios/{id}
 
-## 3. Services
+Músicas
 
-Localizados em `service/`, contêm a lógica de negócio.
+Listar todas
 
-Exemplos: - SongService - PlaylistService - UserService
+GET /musicas
 
-## 4. Controllers
 
-Localizados em `controller/`, expõem a API REST e tratam das
-requisições.
+Criar música
 
-Exemplos: - SongController - PlaylistController - UserController
+POST /musicas
 
-# Funcionalidades CRUD
 
-## Song
+Body:
 
--   GET `/songs` -- Lista todas as músicas
--   POST `/songs` -- Adiciona nova música
--   DELETE `/songs/{id}` -- Remove música pelo ID
+{
+  "nome": "Believer",
+  "artista": "Imagine Dragons"
+}
 
-## Playlist
 
--   GET `/playlists` -- Lista todas as playlists
--   POST `/playlists` -- Adiciona nova playlist
--   DELETE `/playlists/{id}` -- Remove playlist pelo ID
+Excluir música
 
-## User
+DELETE /musicas/{id}
 
--   GET `/users` -- Lista todos os usuários
--   POST `/users` -- Adiciona novo usuário
--   DELETE `/users/{id}` -- Remove usuário pelo ID
+Playlists
 
-# Como Rodar o Projeto
+Listar todas
 
-1.  Instalar Java 17 ou superior\
-2.  Instalar Maven\
-3.  Clonar o repositório\
-4.  Rodar o comando:
+GET /playlists
 
-```{=html}
-<!-- -->
-```
-    mvn spring-boot:run
+Criar playlist
 
+POST /playlists
+
+Body:
+
+{
+  "titulo": "Treino",
+  "usuario": { "id": 1 },
+  "musicas": [
+    { "id": 1 }
+  ]
+}
+
+Excluir playlist
+
+DELETE /playlists/{id}
 5.  Acessar a API em: `http://localhost:8080/`
