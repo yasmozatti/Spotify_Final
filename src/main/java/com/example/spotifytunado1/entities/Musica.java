@@ -4,25 +4,31 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-public class Usuario {
+public class Musica {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String nome;
+    private String artista;
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "musicas")
     private List<Playlist> playlists;
 
-    public Usuario() {}
+    public Musica() {}
 
-    public Usuario(String nome) {
+    public Musica(String nome, String artista) {
         this.nome = nome;
+        this.artista = artista;
     }
 
     public String getNome(){
       return nome;
+    }
+
+    public String getArtista(){
+      return artista;
     }
 
     public Long getId(){
@@ -31,6 +37,10 @@ public class Usuario {
 
     public void setNome(String nome){
       this.nome = nome;
+    }
+
+    public void setArtista(String artista){
+      this.artista = artista;
     }
 
     public List<Playlist> getPlaylists(){
