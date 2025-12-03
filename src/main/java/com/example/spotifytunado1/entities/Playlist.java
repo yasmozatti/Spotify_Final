@@ -41,4 +41,20 @@ public class Playlist {
     public void setTitulo(String titulo){
       this.titulo = titulo;
     }
+
+    public Usuario getUsuario(){
+      return usuario;
+    }
+
+    public void setUsuario(Usuario usuario){
+      this.usuario = usuario;
+    }
+
+    public List<Musica> getMusicas(){
+      return musicas;
+    }
+
+    public void setMusicas(List<Musica> musicas){
+      this.musicas = musicas;
+    }
 }

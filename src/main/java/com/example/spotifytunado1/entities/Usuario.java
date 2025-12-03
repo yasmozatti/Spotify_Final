@@ -32,5 +32,12 @@ public class Usuario {
     public void setNome(String nome){
       this.nome = nome;
     }
-  
+
+    public List<Playlist> getPlaylists(){
+      return playlists;
+    }
+
+    public void setPlaylists(List<Playlist> playlists){
+      this.playlists = playlists;
+    }
 }

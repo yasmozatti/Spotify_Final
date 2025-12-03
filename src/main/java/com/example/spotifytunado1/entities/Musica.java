@@ -30,4 +30,24 @@ public class Musica {
     public String getArtista(){
       return artista;
     }
+
+    public Long getId(){
+      return id;
+    }
+
+    public void setNome(String nome){
+      this.nome = nome;
+    }
+
+    public void setArtista(String artista){
+      this.artista = artista;
+    }
+
+    public List<Playlist> getPlaylists(){
+      return playlists;
+    }
+
+    public void setPlaylists(List<Playlist> playlists){
+      this.playlists = playlists;
+    }
 }
